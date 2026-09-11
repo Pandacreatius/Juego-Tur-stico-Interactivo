@@ -1,0 +1,13 @@
+MISIÓN CHINCHILLA · V57.3
+
+CORRECCIÓN DE SCROLL DEFINITIVA
+- Eliminado el scroll anidado de #stage.
+- #game es ahora el único contenedor vertical desplazable durante la partida.
+- Cabecera sticky y dock inferior fixed.
+- #stage vuelve a crecer de forma natural según su contenido.
+- Se elimina el hack height:0 que podía fallar en Safari/Chrome móvil.
+- Al abrir/cerrar se bloquea/restaura html+body para impedir scroll del fondo.
+- scrollTop() reinicia ahora el scroll real de #game.
+- Las cinemáticas ya no crean un segundo viewport interno.
+
+Se mantiene la integración de cinemáticas de V57.2 y el resto de mecánicas de campo V57.

@@ -64,25 +64,53 @@ const CINEMATICS = {
 function cinematicFor(chapter){return CINEMATICS[chapter] || [{who:'ALDARA · HOY',image:CHAPTERS[chapter-1].image,text:CHAPTERS[chapter-1].story}]}
 
 function renderCinematic(chapter,onDone){
-  const beats=cinematicFor(chapter); let i=0;
+  const beats=cinematicFor(chapter); let i=0,locked=false;
+  const gameEl=document.getElementById('game');
   document.getElementById('liveMap')?.classList.add('hidden');
+  gameEl?.classList.add('cinematic-mode');
+
+  const finish=()=>{
+    if(locked)return;
+    locked=true;
+    const scene=stage.querySelector('.cinematic');
+    scene?.classList.add('cinematic-out');
+    setTimeout(()=>{gameEl?.classList.remove('cinematic-mode');onDone?.()},220);
+  };
+  const next=()=>{
+    if(locked)return;
+    if(i<beats.length-1){
+      i++;
+      paint();
+    }else finish();
+  };
   const paint=()=>{
     const b=beats[i];
-    stage.innerHTML=`<section class="cinematic">
+    const nextBeat=beats[i+1];
+    if(nextBeat){const preload=new Image();preload.src=nextBeat.image}
+    stage.scrollTop=0;
+    stage.innerHTML=`<section class="cinematic cinematic-integrated-v572" aria-label="Cinemática del capítulo">
       <img src="${b.image}" alt="" class="cinematic-bg cinematic-kenburns">
       <div class="cinematic-shade"></div>
+      <div class="cinematic-top-v572">
+        <span><i class="fa-solid fa-film"></i> ESCENA ${i+1}/${beats.length}</span>
+        <button type="button" id="cinSkip" aria-label="Saltar cinemática">SALTAR</button>
+      </div>
       <div class="cinematic-content">
         <div class="cinematic-dots">${beats.map((_,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')}</div>
         <small>${b.who}</small><h2>${b.text}</h2>
-        <button class="btn primary" id="cinNext">${i===beats.length-1?'CONTINUAR →':'SIGUIENTE'}</button>
+        <button class="btn primary cinematic-next-v572" id="cinNext">${i===beats.length-1?'ENTRAR EN LA MISIÓN →':'SIGUIENTE'}</button>
       </div>
     </section>`;
-    document.getElementById('cinNext').onclick=()=>{if(i<beats.length-1){i++;paint()}else onDone()};
-  };paint();
+    document.getElementById('cinNext').onclick=next;
+    document.getElementById('cinSkip').onclick=finish;
+  };
+  paint();
 }
 
 function renderFinale(onDone){
   document.getElementById('liveMap')?.classList.add('hidden');
+  const gameEl=document.getElementById('game');
+  gameEl?.classList.add('cinematic-mode');
   const beats=[
     {who:'AMINA · RECONSTRUCCIÓN',image:'assets/amina_espera_v48.webp',text:'Esperó una carta que ya había sido escrita.'},
     {who:'LEYENDA',image:'assets/amina_tragedia_v48.webp',text:'Con el tiempo enfermó. La gente dijo que murió de amor.'},
@@ -91,9 +119,21 @@ function renderFinale(onDone){
     {who:'ALDARA · HOY',image:'assets/carta_final_v48.webp',text:'Dos personas murieron creyendo que la otra había elegido abandonarlas.'},
     {who:'ALDARA · HOY',image:'assets/aldara.webp',text:'No fue la guerra la que los separó. Fue una carta que nunca llegó.'}
   ];
-  let i=0;
+  let i=0,locked=false;
+  const finish=()=>{
+    if(locked)return;
+    locked=true;
+    stage.querySelector('.cinematic')?.classList.add('cinematic-out');
+    setTimeout(()=>{gameEl?.classList.remove('cinematic-mode');onDone?.()},220);
+  };
   const paint=()=>{
-    const b=beats[i]; stage.innerHTML=`<section class="cinematic finale-cinematic"><img src="${b.image}" alt="" class="cinematic-bg cinematic-kenburns"><div class="cinematic-shade"></div><div class="cinematic-content"><div class="cinematic-dots">${beats.map((_,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')}</div><small>${b.who}</small><h2>${b.text}</h2><button class="btn primary" id="cinNext">${i===beats.length-1?'VER EPÍLOGO →':'SIGUIENTE'}</button></div></section>`;
-    document.getElementById('cinNext').onclick=()=>{if(i<beats.length-1){i++;paint()}else onDone()};
-  };paint();
+    const b=beats[i],nextBeat=beats[i+1];
+    if(nextBeat){const preload=new Image();preload.src=nextBeat.image}
+    stage.scrollTop=0;
+    stage.innerHTML=`<section class="cinematic finale-cinematic cinematic-integrated-v572"><img src="${b.image}" alt="" class="cinematic-bg cinematic-kenburns"><div class="cinematic-shade"></div><div class="cinematic-top-v572"><span><i class="fa-solid fa-film"></i> DESENLACE ${i+1}/${beats.length}</span><button type="button" id="cinSkip">SALTAR</button></div><div class="cinematic-content"><div class="cinematic-dots">${beats.map((_,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')}</div><small>${b.who}</small><h2>${b.text}</h2><button class="btn primary cinematic-next-v572" id="cinNext">${i===beats.length-1?'VER EPÍLOGO →':'SIGUIENTE'}</button></div></section>`;
+    document.getElementById('cinNext').onclick=()=>{if(i<beats.length-1){i++;paint()}else finish()};
+    document.getElementById('cinSkip').onclick=finish;
+  };
+  paint();
 }
+

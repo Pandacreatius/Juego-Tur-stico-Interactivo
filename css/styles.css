@@ -433,3 +433,301 @@ section:not(.hero){padding:62px 18px}.section-title h2{font-size:clamp(34px,11vw
 @media(min-width:800px){
   .field-puzzle-v57,.location-gate-v57,.field-travel-v57{max-width:430px}.camera-frame-v57{min-height:220px}.trace-surface-v57{height:360px}.light-table-v57{height:400px}
 }
+
+/* =========================================================
+   V57.1 · SCROLL FIX
+   El juego bloquea el body mientras está abierto, por lo que
+   .stage debe ser SIEMPRE el viewport desplazable real.
+   ========================================================= */
+.game.open{
+  height:100dvh;
+  max-height:100dvh;
+  overflow:hidden;
+}
+.stage{
+  position:relative;
+  flex:1 1 0%;
+  width:100%;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:none;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  overscroll-behavior-y:contain;
+  scrollbar-gutter:stable;
+}
+/* Los modales también deben desplazarse en pantallas pequeñas. */
+.modal-card{
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+}
+/* Esta mesa no necesita bloquear el gesto vertical: los controles
+   interactivos reales son los sliders situados debajo. */
+.light-table-v57{touch-action:pan-y}
+/* Deja una zona cómoda para iniciar el scroll alrededor del lienzo
+   de trazado, que sí necesita capturar el dedo durante la prueba. */
+.trace-surface-v57{width:calc(100% - 24px);margin-left:auto;margin-right:auto}
+
+@media(min-width:800px){
+  .game.open{height:94vh;max-height:94vh}
+}
+
+
+/* =========================================================
+   V57.2 · CINEMÁTICAS INTEGRADAS
+   GPS -> cinemática -> briefing -> prueba.
+   ========================================================= */
+.game.cinematic-mode .mobile-dock{opacity:0;pointer-events:none;transform:translateY(110%)}
+.game.cinematic-mode .live-map{display:none!important}
+.cinematic-integrated-v572{min-height:100%;height:100%;padding:0;overflow:hidden;isolation:isolate;animation:v572SceneIn .28s ease both}
+.cinematic-integrated-v572.cinematic-out{animation:v572SceneOut .22s ease both}
+.cinematic-integrated-v572 .cinematic-bg{transform:scale(1.02)}
+.cinematic-integrated-v572 .cinematic-shade{background:linear-gradient(0deg,#07100d 3%,rgba(7,16,13,.92) 31%,rgba(7,16,13,.38) 66%,rgba(7,16,13,.18) 100%)}
+.cinematic-top-v572{position:absolute;z-index:5;top:calc(12px + env(safe-area-inset-top));left:14px;right:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cinematic-top-v572 span{display:flex;align-items:center;gap:7px;font:8px var(--mono);letter-spacing:.13em;color:#e8d3ad;background:rgba(7,16,13,.58);backdrop-filter:blur(8px);padding:8px 10px;border:1px solid rgba(255,255,255,.08);border-radius:999px}
+.cinematic-top-v572 button{border:0;background:rgba(7,16,13,.58);backdrop-filter:blur(8px);color:#d3ddd8;font:8px var(--mono);letter-spacing:.13em;padding:9px 11px;border-radius:999px}
+.cinematic-integrated-v572 .cinematic-content{padding:0 18px calc(28px + env(safe-area-inset-bottom));width:100%;max-width:620px}
+.cinematic-integrated-v572 .cinematic-content h2{font-size:clamp(31px,9.2vw,52px);line-height:1.04;text-wrap:balance;text-shadow:0 4px 24px rgba(0,0,0,.45)}
+.cinematic-next-v572{width:100%;min-height:50px}
+@keyframes v572SceneIn{from{opacity:0}to{opacity:1}}
+@keyframes v572SceneOut{from{opacity:1}to{opacity:0}}
+@media(max-height:520px) and (orientation:landscape){
+  .cinematic-integrated-v572 .cinematic-content{padding-bottom:14px;max-width:720px}
+  .cinematic-integrated-v572 .cinematic-content h2{font-size:clamp(25px,5vw,38px);margin:6px 0 10px}
+  .cinematic-integrated-v572 .cinematic-dots{margin-bottom:8px}
+  .cinematic-next-v572{min-height:42px}
+}
+@media(prefers-reduced-motion:reduce){
+  .cinematic-kenburns{animation:none!important}
+  .cinematic-integrated-v572,.cinematic-integrated-v572.cinematic-out{animation:none!important}
+}
+
+/* =========================================================
+   V57.3 · SCROLL ROOT DEFINITIVO
+   Un único scroll vertical: #game. Evita nested-scroll con
+   fixed + flex + overflow en Safari/Chrome móvil.
+   ========================================================= */
+.game.open{
+  display:block !important;
+  height:100dvh !important;
+  max-height:100dvh !important;
+  overflow-x:hidden !important;
+  overflow-y:scroll !important;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  overscroll-behavior-y:contain;
+  scrollbar-gutter:auto;
+}
+.gamebar{
+  position:sticky;
+  top:0;
+  width:100%;
+  z-index:50;
+}
+.stage{
+  display:block;
+  width:100%;
+  height:auto !important;
+  min-height:calc(100dvh - 58px) !important;
+  max-height:none !important;
+  flex:none !important;
+  overflow:visible !important;
+  touch-action:auto !important;
+  overscroll-behavior:visible !important;
+  padding-bottom:calc(92px + env(safe-area-inset-bottom));
+}
+.mobile-dock{
+  position:fixed !important;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:70;
+}
+.live-map{
+  position:fixed !important;
+  left:10px;
+  right:10px;
+  bottom:calc(78px + env(safe-area-inset-bottom));
+  z-index:65;
+}
+/* Una cinemática ocupa la pantalla, pero no crea otro viewport. */
+.cinematic-integrated-v572{
+  min-height:calc(100dvh - 58px) !important;
+  height:auto !important;
+}
+/* Briefings y pantallas largas crecen de forma natural dentro de #game. */
+.cinematic,.briefing,.reward,.travel,.resume,.ending{
+  height:auto !important;
+}
+/* Las superficies interactivas solo capturan gestos cuando realmente
+   los necesitan; el resto de la página conserva el pan vertical. */
+.light-table-v57{touch-action:pan-y !important}
+
+@media(min-width:800px){
+  .game.open{
+    height:94vh !important;
+    max-height:94vh !important;
+    overflow-y:scroll !important;
+  }
+  .mobile-dock{
+    position:fixed !important;
+    left:0;
+    right:0;
+    bottom:0;
+  }
+  .live-map{
+    position:fixed !important;
+    left:10px;
+    right:10px;
+  }
+  .stage{min-height:calc(94vh - 58px) !important}
+  .cinematic-integrated-v572{min-height:calc(94vh - 58px) !important}
+}
+
+/* =========================================================
+   V57.4 · APP MODE + LEGIBILIDAD
+   El juego deja de comportarse como modal. Cuando está activo,
+   la landing no existe visualmente y el juego ocupa toda la app.
+   ========================================================= */
+body.game-active > .topbar,
+body.game-active > main{
+  display:none !important;
+}
+body.game-active{
+  background:#08110f;
+}
+.game.open{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100dvh !important;
+  max-height:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  background:#08110f !important;
+}
+.gamebar{
+  background:#09130f !important;
+  border-bottom-color:rgba(255,255,255,.08) !important;
+}
+
+/* Briefing: la información turística ya no flota sobre una foto.
+   La imagen funciona como cabecera visual y el texto vive sobre
+   una superficie sólida de alto contraste. */
+.briefing{
+  display:block !important;
+  min-height:calc(100dvh - 58px) !important;
+  padding:0 0 calc(118px + env(safe-area-inset-bottom)) !important;
+  background:#09120f !important;
+  overflow:visible !important;
+}
+.briefing .brief-img{
+  position:relative !important;
+  inset:auto !important;
+  display:block;
+  width:100%;
+  height:clamp(230px,42dvh,420px) !important;
+  object-fit:cover;
+  object-position:center 34%;
+  filter:saturate(.88) brightness(.78) contrast(1.04);
+}
+.briefing .brief-shade{
+  position:absolute !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:auto !important;
+  height:clamp(230px,42dvh,420px) !important;
+  pointer-events:none;
+  background:linear-gradient(0deg,#09120f 0%,rgba(9,18,15,.18) 48%,rgba(9,18,15,.18) 100%) !important;
+}
+.briefing .brief-copy{
+  position:relative !important;
+  z-index:3;
+  width:min(100%,680px) !important;
+  margin:-34px auto 0 !important;
+  padding:24px 18px 8px !important;
+  background:#0d1a16 !important;
+  border-top:1px solid rgba(212,169,104,.2);
+  border-radius:24px 24px 0 0;
+  box-shadow:0 -18px 42px rgba(0,0,0,.42);
+}
+.briefing .brief-copy > small{
+  display:inline-block;
+  padding:7px 9px;
+  border-radius:999px;
+  background:#14241e;
+  border:1px solid rgba(212,169,104,.18);
+}
+.briefing .brief-copy h2{
+  color:#fff;
+  text-shadow:none !important;
+}
+.briefing .brief-copy > p{
+  color:#e2e7e4 !important;
+  text-shadow:none !important;
+}
+.briefing .mission-objective,
+.briefing .place-panel-v54 article{
+  background:#12231d !important;
+  border-color:rgba(255,255,255,.1) !important;
+  box-shadow:none !important;
+}
+.briefing .mission-objective{
+  border-left:3px solid var(--copper) !important;
+}
+.briefing .place-panel-v54 p,
+.briefing .place-points li,
+.briefing .real-history-v55 p{
+  color:#d8e1dc !important;
+}
+.briefing #briefStart{
+  width:100%;
+  min-height:52px;
+  margin-top:14px;
+}
+
+/* Cinemáticas: conservan la imagen a pantalla completa, pero el texto
+   tiene una placa propia y un degradado más fuerte para asegurar lectura. */
+.cinematic-integrated-v572 .cinematic-shade{
+  background:linear-gradient(0deg,#06100c 0%,rgba(6,16,12,.98) 24%,rgba(6,16,12,.76) 48%,rgba(6,16,12,.18) 76%,rgba(6,16,12,.08) 100%) !important;
+}
+.cinematic-integrated-v572 .cinematic-content{
+  margin:0 auto 10px !important;
+  padding:18px 18px calc(18px + env(safe-area-inset-bottom)) !important;
+  background:linear-gradient(180deg,rgba(12,26,21,.86),rgba(8,18,15,.96));
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.42);
+  backdrop-filter:blur(12px);
+}
+.cinematic-integrated-v572 .cinematic-content h2,
+.cinematic-integrated-v572 .cinematic-content p{
+  text-shadow:0 2px 12px rgba(0,0,0,.75);
+}
+.cinematic-integrated-v572 .cinematic-content p{
+  color:#eef2ef !important;
+}
+
+/* Portada: mejora secundaria de contraste sin tapar la fotografía. */
+.hero-content{
+  text-shadow:0 2px 18px rgba(0,0,0,.52);
+}
+.hero .lead{
+  color:#eef2ef;
+}
+
+/* Escritorio también es aplicación completa: se elimina el 94vh heredado. */
+@media(min-width:800px){
+  .game.open{
+    height:100dvh !important;
+    max-height:none !important;
+  }
+  .stage{min-height:calc(100dvh - 58px) !important}
+  .cinematic-integrated-v572{min-height:calc(100dvh - 58px) !important}
+  .briefing .brief-copy{padding-left:26px !important;padding-right:26px !important}
+}

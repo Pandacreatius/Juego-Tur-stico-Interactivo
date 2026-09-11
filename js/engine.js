@@ -4,14 +4,18 @@ const progress=document.getElementById('progress');
 const gameLabel=document.getElementById('gameLabel');
 const journal=document.getElementById('journal');
 const mapModal=document.getElementById('mapModal');
-let current=0, completed=new Set(), introSeen=false, tutorialSeen=false, mapInstance=null;
+let current=0, completed=new Set(), introSeen=false, tutorialSeen=false, mapInstance=null, landingScrollY=0;
 const SAVE_KEY='promesa_chinchilla_v57_field_game';
 
 function roman(n){return ['I','II','III','IV','V','VI','VII','VIII','IX'][n-1]}
 function save(){localStorage.setItem(SAVE_KEY,JSON.stringify({current,completed:[...completed],introSeen,tutorialSeen}))}
 function load(){try{return JSON.parse(localStorage.getItem(SAVE_KEY)||'null')}catch{return null}}
 function updateBar(){const n=Math.min(current+1,9);gameLabel.textContent=current<9?`CAPÍTULO ${roman(n)}`:'CASO CERRADO';progress.style.width=`${Math.min((completed.size/9)*100,100)}%`}
-function scrollTop(){stage.scrollTop=0}
+function scrollTop(){
+  stage.scrollTop=0;
+  game.scrollTop=0;
+  if(typeof game.scrollTo==='function') game.scrollTo({top:0,left:0,behavior:'auto'});
+}
 
 function chapterCard(ch){
   return `<article class="chapter-card">
@@ -62,11 +66,23 @@ function bootLanding(){
 }
 
 function openGame(){
-  game.classList.add('open');game.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+  landingScrollY=window.scrollY||document.documentElement.scrollTop||0;
+  document.body.classList.add('game-active');
+  game.classList.add('open');
+  game.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+  document.documentElement.style.overflow='hidden';
+  game.scrollTop=0;
   const s=load();
   if(s&&s.introSeen){current=Math.min(+s.current||0,8);completed=new Set(s.completed||[]);introSeen=true;tutorialSeen=!!s.tutorialSeen;showResume()}else startFresh();
 }
-function closeGame(){window.currentPuzzleCleanup?.();window.currentPuzzleCleanup=null;save();game.classList.remove('open');game.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+function closeGame(){
+  window.currentPuzzleCleanup?.();window.currentPuzzleCleanup=null;save();
+  game.classList.remove('open');game.classList.remove('cinematic-mode');game.setAttribute('aria-hidden','true');
+  document.body.classList.remove('game-active');
+  document.body.style.overflow='';document.documentElement.style.overflow='';game.scrollTop=0;
+  requestAnimationFrame(()=>window.scrollTo({top:landingScrollY,left:0,behavior:'auto'}));
+}
 function startFresh(){current=0;completed=new Set();introSeen=false;tutorialSeen=false;localStorage.removeItem(SAVE_KEY);updateBar();renderCinematic(0,()=>{introSeen=true;save();showTutorial()})}
 
 function showTutorial(){
@@ -96,7 +112,15 @@ function showResume(){
 function showBriefing(){
   const ch=CHAPTERS[current];updateBar();scrollTop();updateLiveMap();
   stage.innerHTML=`<section class="briefing"><img src="${ch.image}" alt="" class="brief-img"><div class="brief-shade"></div><div class="brief-copy"><small>CAPÍTULO ${roman(ch.n)} · ${ch.place}</small><h2>${ch.title}</h2><p>${ch.story}</p><div class="brief-meta-v53"><span><i class="${ch.icon}"></i> ${ch.kind}</span><span><i class="fa-solid fa-location-dot"></i> Zona validada</span><span><i class="fa-regular fa-clock"></i> ≈ ${ch.minutes} min</span></div><div class="mission-objective"><span>MISIÓN</span><b>${ch.question}</b><small>${ch.success}</small></div><div class="place-panel-v54"><article><small>ESTÁS EN</small><h4>${ch.placeShort}</h4><p>${ch.heritage}</p></article><article><small>LEVANTA LA VISTA</small><ul class="place-points"><li><i class="fa-regular fa-eye"></i><span>${ch.lookfor}</span></li><li><i class="fa-regular fa-lightbulb"></i><span>${ch.visitTip}</span></li></ul></article><article class="real-history-v55"><small>HISTORIA REAL</small><p>${ch.realHistory}</p><a href="${ch.officialUrl}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Fuente oficial</a></article></div><button class="btn primary" id="briefStart"><i class="fa-solid fa-gamepad"></i> Empezar prueba</button></div></section>`;
-  document.getElementById('briefStart').onclick=()=>{const beats=CINEMATICS[ch.n];if(beats)renderCinematic(ch.n,()=>renderPuzzle(ch));else renderPuzzle(ch)};
+  document.getElementById('briefStart').onclick=()=>renderPuzzle(ch);
+}
+
+function enterChapterScene(ch){
+  scrollTop();
+  liveMap.classList.add('hidden');
+  const beats=CINEMATICS[ch.n];
+  if(beats?.length)renderCinematic(ch.n,()=>showBriefing());
+  else showBriefing();
 }
 
 function completeChapter(ch){
@@ -147,7 +171,7 @@ function showLocationCheck(ch){
       <p class="location-privacy-v57"><i class="fa-solid fa-shield-halved"></i> El progreso no guarda coordenadas. La geolocalización depende del permiso y precisión del navegador.</p>
     </section>`;
     document.getElementById('locate57').onclick=async()=>{const btn=document.getElementById('locate57');btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Buscando señal';await requestLocationFix();render()};
-    document.getElementById('enterField57').onclick=()=>showBriefing();
+    document.getElementById('enterField57').onclick=()=>enterChapterScene(ch);
     document.getElementById('demoField57')?.addEventListener('click',()=>{sessionStorage.setItem('promesa_field_demo','1');render()});
   };
   render();

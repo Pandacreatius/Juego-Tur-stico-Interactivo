@@ -53,3 +53,10 @@ IMPORTANTE PARA PRODUCCIÓN
 - Geolocalización y sensores deben servirse por HTTPS (o localhost durante desarrollo).
 - Las coordenadas de las 9 paradas deben verificarse físicamente in situ antes de publicar la ruta definitiva.
 - Los archivos assets/env/parada-1.jpg ... parada-9.jpg siguen siendo placeholders; conviene sustituirlos por fotos reales del lugar.
+
+V57.1 · FIX DE SCROLL
+- .stage pasa a ser un flex child con height:0 + flex:1, patrón estable para overflow interno en Safari/Chrome móvil.
+- overflow-y:auto reforzado y touch-action:pan-y en el viewport del juego.
+- Modales con scroll vertical propio.
+- La mesa de alineación deja de bloquear el gesto vertical.
+- El lienzo de trazado mantiene captura táctil, pero añade márgenes laterales para poder iniciar scroll con facilidad.

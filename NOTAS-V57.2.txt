@@ -1,0 +1,14 @@
+LA PROMESA DE CHINCHILLA · V57.2
+
+CINEMÁTICAS INTEGRADAS EN EL FLUJO DE CAMPO
+- Nuevo orden: validación GPS → cinemática narrativa → briefing del lugar → prueba.
+- La cinemática ya no aparece como una pantalla extra después del briefing.
+- Se conserva la cinemática general de apertura y el desenlace completo.
+- Control SALTAR disponible en todas las secuencias.
+- Indicador de escena y precarga del siguiente plano para reducir parpadeos.
+- Dock móvil y minimapa se ocultan durante la secuencia para reforzar la inmersión.
+- Transición breve de entrada/salida y respeto a prefers-reduced-motion.
+- El briefing pasa a ser directamente la entrada jugable: su botón abre la prueba.
+
+SCROLL
+- Se mantiene íntegro el fix V57.1 del contenedor .stage.

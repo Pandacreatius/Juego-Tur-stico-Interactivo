@@ -1,0 +1,12 @@
+V57.4 · APP MODE + LEGIBILIDAD
+
+- El juego ya no se presenta como una ventana/modal sobre la landing.
+- Al pulsar Jugar se ocultan por completo la cabecera y la página de inicio.
+- El juego ocupa 100dvh tanto en móvil como en escritorio.
+- Se elimina el límite heredado de 94vh en escritorio.
+- Al cerrar el juego se recupera la landing y su posición de scroll.
+- Los briefings dejan de colocar grandes bloques de texto directamente sobre fotografías.
+- La fotografía del briefing pasa a ser una cabecera visual y el contenido aparece sobre fondo sólido oscuro.
+- Las cinemáticas mantienen imagen completa, pero incorporan un panel oscuro translúcido y un degradado más fuerte bajo los textos.
+- Se aumenta el contraste de textos y tarjetas informativas.
+- Se mantiene el sistema de scroll raíz de V57.3 y las cinemáticas integradas de V57.2.
