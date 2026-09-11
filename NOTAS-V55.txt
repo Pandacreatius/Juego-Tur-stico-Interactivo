@@ -1,0 +1,34 @@
+V55 · MOBILE FIRST + rediseño profundo de puzzles
+
+Objetivo:
+La experiencia está diseñada para jugarse caminando por Chinchilla con un móvil. El escritorio se considera únicamente un modo de previsualización.
+
+Cambios principales:
+- Mobile-first real (360–430 px como rango prioritario).
+- Uso de 100svh/100dvh, safe-area para iPhone y controles táctiles >=44 px.
+- Nueva barra inferior móvil fija: Mapa · Cuaderno · Pista · Objetivo.
+- La cabecera de juego se simplifica en móvil.
+- Bancos de opciones y fuentes convertidos a carruseles táctiles cuando procede.
+- Cronologías y cadenas causales pasan a disposición vertical en móvil.
+- Mapas, documentos y tableros ocupan 56–58svh para ser manipulables con el dedo.
+- Marcadores de Amina y Ferran usan retratos, no letras genéricas.
+- Font Awesome sustituye numerosos símbolos básicos de interfaz por iconografía moderna.
+- Los símbolos del código secreto de Amina/Ferran se mantienen porque forman parte del puzzle.
+- Cada puzzle conserva una sola acción principal visible por fase.
+- Feedback y pistas quedan accesibles desde el pulgar.
+- Home y ruta completamente responsive.
+- Desktop: el juego se muestra como preview de un dispositivo móvil (430 px).
+
+Turismo / patrimonio:
+- Se añade Historia real a cada parada.
+- Información contrastada con Turismo y Cultura de Castilla-La Mancha.
+- Baños Árabes: hammam islámico del siglo XI; visita exterior; propiedad privada.
+- Casco: trazado medieval y raíces urbanas árabes.
+- Casas-cueva: arquitectura popular reconocible por chimeneas blancas.
+- Castillo: aspecto actual principalmente del siglo XV sobre fortaleza de origen islámico; se advierte que es posterior a la ficción del XIII.
+- Cada ficha incluye enlace a fuente turística oficial.
+
+Validación:
+- data.js, engine.js, puzzles.js y cinematics.js pasan node --check.
+- 20 referencias locales a assets comprobadas; 0 ausentes.
+- La captura automatizada con Chromium no es fiable en este entorno; la validación final debe hacerse en navegador móvil real.

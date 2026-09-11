@@ -1,0 +1,27 @@
+LA PROMESA DE CHINCHILLA · V50
+Pulido de apertura: capítulos 1–3.
+
+CAPÍTULO 1 · LA LEYENDA ROTA
+- Sustituida la clasificación de tarjetas por comparación directa de tres fuentes.
+- El jugador selecciona y conecta dos frases incompatibles.
+- La contradicción abre explícitamente la pregunta central sobre la carta.
+
+CAPÍTULO 2 · EL CABALLERO HERIDO
+- Sustituida la imagen con hotspots arbitrarios por un tablero forense estilizado.
+- Modo inspección opcional.
+- Siete indicios, cuatro relevantes para el movimiento.
+- Segunda fase causal: caída → separación → avance a pie → acceso.
+- Reconstrucción visual animada al resolver.
+
+CAPÍTULO 3 · EL ESCONDITE
+- Eliminado el medidor de riesgo que revelaba la solución antes de probarla.
+- Tres documentos con restricciones independientes.
+- Plan de hora, ruta e inventario.
+- Simulación paso a paso que muestra exactamente dónde falla un plan incorrecto.
+- Inventario ajustado a 3 unidades: agua, vendas e higos secos.
+
+OTROS
+- Microcinemáticas 1–3 reescritas para preparar la acción jugable.
+- Textos narrativos 1–3 reforzados.
+- Nueva clave de guardado v50.
+- JavaScript validado con node --check.

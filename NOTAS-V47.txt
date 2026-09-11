@@ -1,0 +1,26 @@
+V47 CLEAN — LA PROMESA DE CHINCHILLA
+
+Objetivo de esta versión:
+- Dejar de acumular overrides de versiones antiguas.
+- Nuevo canon: Aldara (presente), Amina, Ferran y Rajid (ficción, siglo XIII).
+- Subtítulo narrativo: “La carta que nunca llegó”.
+- Motor, datos, puzzles y cinemáticas separados.
+- 9 puzzles nuevos centrados en investigación y deducción.
+
+Arquitectura:
+- index.html: shell / landing.
+- css/styles.css: interfaz.
+- js/data.js: historia, personajes, capítulos y pistas.
+- js/puzzles.js: mecánicas de los 9 puzzles.
+- js/cinematics.js: microcinemáticas.
+- js/engine.js: progreso, guardado, mapa, cuaderno y flujo.
+
+IMPORTANTE VISUAL:
+Los archivos amina_temp.webp, ferran_temp.webp, rajid_temp.webp, cuidado_temp.webp,
+despedida_temp.webp y carta_medallon_temp.webp son placeholders temporales reutilizados de la v46.
+No son arte final. La siguiente fase debe generar e integrar imágenes canónicas nuevas de Amina,
+Ferran y Rajid y escenas específicas de la nueva trama.
+
+Historia y ficción:
+Amina, Ferran y Rajid son personajes ficticios. Antes de publicación, revisar todos los textos
+históricos y las localizaciones exactas con fuentes oficiales y visita de campo.

@@ -1,0 +1,11 @@
+V54 · rediseño visual + recuperación del valor turístico
+
+Cambios principales:
+- Home renovada con nueva imagen de cabecera (Aldara actual y Chinchilla) en lugar del fondo antiguo.
+- Incorporación de iconografía moderna mediante Font Awesome CDN.
+- Nueva sección "La Ruta" para recuperar el enfoque turístico: qué lugar se visita, qué mirar y por qué importa.
+- Tarjetas de capítulos rediseñadas con imagen, icono, metadatos y aportación patrimonial.
+- Briefing de cada capítulo enriquecido con panel del lugar: contexto patrimonial + qué mirar.
+- Pantalla de desplazamiento entre pruebas reforzada para que el paseo entre paradas tenga sentido narrativo y turístico.
+- Modal de mapa mejorada con descripciones patrimoniales por parada.
+- Nueva clave de guardado local independiente: promesa_chinchilla_v54_visual_tourism.

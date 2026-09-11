@@ -1,0 +1,21 @@
+LA PROMESA DE CHINCHILLA · V49
+
+Cambios principales
+- Puzzles rediseñados para parecer una aventura de investigación, no un test.
+- Cap. 1: tablero de clasificación de evidencias.
+- Cap. 2: escena inspeccionable + reconstrucción causal.
+- Cap. 3: planificación con documentos, riesgo e inventario.
+- Cap. 4: plano orientable + trazado de ruta.
+- Cap. 5: diccionario de símbolos + descifrado de mensaje.
+- Cap. 6: líneas de visión + registro de presencias.
+- Cap. 7: patrullas dinámicas + escondite de la carta.
+- Cap. 8: alineación real de documentos + cronología.
+- Cap. 9: relaciones del caso + combinación de archivo + reconstrucción de la carta.
+- Aldara acompaña los puzzles con comentarios contextuales.
+- Rajid actualizado visual y narrativamente.
+- Corregido bug heredado STORY_BEATS/CINEMATICS.
+- Nueva clave de guardado v49.
+
+Validaciones pendientes
+- Las coordenadas y recorridos físicos son de prototipo y requieren verificación in situ.
+- El retrato de Rajid se ha aislado a partir del arte conceptual de esta iteración; conviene reemplazarlo por un retrato maestro generado de forma independiente si se busca continuidad cinematográfica perfecta.

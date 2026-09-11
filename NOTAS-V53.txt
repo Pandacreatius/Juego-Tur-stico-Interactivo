@@ -1,0 +1,18 @@
+V53 · PULIDO GLOBAL DE PRODUCTO
+
+Cambios principales:
+- Tutorial inicial de 30 segundos: observar, conectar, demostrar.
+- Cada capítulo muestra Pregunta del caso y condición clara para avanzar.
+- Curva de dificultad visible: inicio → medio → medio-alto → alto → final.
+- Sistema de pistas 1/3, 2/3, 3/3 sin penalización.
+- Tras dos errores, Aldara destaca de forma no intrusiva que puede ayudar.
+- El cuaderno guarda datos concretos reutilizables de cada capítulo.
+- El puzzle final deja de pedir una ronda arbitraria. Nueva clave justa: PASO NORTE · ↶ (VOLVER) · R (Rajid).
+- Duración comercial provisional ajustada a 60–75 min hasta validar físicamente desplazamientos.
+- Landing aclara ficción histórica + patrimonio real.
+- Nueva clave de guardado independiente: promesa_chinchilla_v53_global_polish.
+
+Validación:
+- node --check correcto en data.js, puzzles.js, cinematics.js y engine.js.
+- referencias locales de assets verificadas.
+- No se afirma prueba visual automatizada completa; debe recorrerse manualmente en móvil.

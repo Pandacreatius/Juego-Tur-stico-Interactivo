@@ -1,0 +1,37 @@
+LA PROMESA DE CHINCHILLA · V52
+Cierre jugable pulido · capítulos 7, 8 y 9
+
+CAPÍTULO 7 · LA HUIDA
+- Sustituido el selector abstracto de ruta/turno por un pequeño tablero de infiltración.
+- Ferran avanza nodo a nodo por un grafo espacial.
+- Cada movimiento o espera hace avanzar el ciclo de patrullas.
+- Las zonas vigiladas cambian de forma visible en seis rondas.
+- La solución requiere observar el patrón y empezar esperando una ronda.
+- Segunda fase: esconder la carta utilizando el código compartido con Amina (⌂ = aquí).
+
+CAPÍTULO 8 · LA MENTIRA DE RAJID
+- Mesa documental táctil: el documento superior se arrastra directamente con ratón o dedo.
+- Se mantiene giro y transparencia para poder alinear las marcas de registro.
+- Un medidor de coincidencia ofrece feedback sin regalar la solución.
+- Una vez alineado se examina el documento a contraluz y aparece “NO ENTREGAR · R.”.
+- Segunda fase: identificar la firma de Rajid cruzando la prueba con el capítulo 6.
+- Tercera fase: reconstruir la cronología con un acontecimiento señuelo.
+
+CAPÍTULO 9 · LA CARTA QUE NUNCA LLEGÓ
+- El final ya no empieza con un formulario de nombres.
+- Primera fase: muro de evidencias con seis hallazgos recuperados de toda la aventura.
+- Hay que reconstruir una cadena causal, no simplemente recordar capítulos.
+- Segunda fase: caja documental con tres diales físicos: ronda 4, símbolo ↶, sello R.
+- Tercera fase: reconstrucción de las cuatro tiras de la carta.
+- El cierre utiliza información aprendida en capítulos anteriores.
+
+OTROS CAMBIOS
+- Reescritas las microcinemáticas de los capítulos 7–9 para preparar exactamente su mecánica.
+- Actualizados objetivos y las tres pistas de cada capítulo.
+- Nueva clave de guardado: promesa_chinchilla_v52_final_polish.
+- Corregida validación de arrays incompletos en cronología y caso final.
+
+VALIDACIÓN
+- node --check correcto en data.js, cinematics.js, puzzles.js y engine.js.
+- 23 referencias gráficas locales comprobadas, 0 ausentes.
+- Se intentó una prueba headless con Chromium, pero el entorno bloquea/atasca Chromium por DBus; no se considera una validación visual completa.
