@@ -1,5 +1,5 @@
 const CHARACTERS = [
-  {id:'aldara',name:'Aldara',time:'HOY',image:'assets/aldara_medallon_v48.webp',role:'La investigadora',desc:'12 años. Vive en el presente. Curiosa, rápida y poco dispuesta a aceptar una leyenda porque “siempre se ha contado así”. Recorre Chinchilla con el móvil, observa el patrimonio y transforma cada parada en una pregunta del caso.',quote:'«Si falta una página, todavía no conocemos la historia.»'},
+  {id:'aldara',name:'Aldara',time:'HOY',image:'assets/aldara_medallon_v48.webp',role:'La investigadora',desc:'12 años. Vive en el presente. Curiosa, rápida y poco dispuesta a aceptar una leyenda porque “siempre se ha contado así”. Recorre Chinchilla con el móvil, observa el patrimonio y transforma cada parada en una investigación sobre el terreno.',quote:'«Si falta una página, todavía no conocemos la historia.»'},
   {id:'amina',name:'Amina',time:'SIGLO XIII',image:'assets/amina_master_v48.webp',role:'La hija del alcaide',desc:'Joven andalusí de Chinchilla. Inteligente, orgullosa y compasiva. Encuentra a Ferran herido después de una batalla y toma una decisión que pone en riesgo su posición y su familia.',quote:'«No te ayudo porque seas de los míos. Te ayudo porque estás herido.»'},
   {id:'ferran',name:'Ferran',time:'SIGLO XIII',image:'assets/ferran_master_v48.webp',role:'El caballero catalán',desc:'Joven caballero cristiano procedente de tierras catalanas. Orgulloso, irónico y leal. La herida le obliga a depender de alguien a quien le enseñaron a considerar enemiga.',quote:'«Me hablaron mucho de vuestra gente. Ninguno de ellos te conocía.»'},
   {id:'rajid',name:'Rajid',time:'SIGLO XIII',image:'assets/rajid_master_v49.webp',role:'El noble que decide por los demás',desc:'Noble andalusí y hombre de confianza del padre de Amina. Sereno, culto e inflexible. Cree que ocultar a Ferran pone en peligro a la familia y a la fortaleza; cuando encuentra la carta, decide que el deber está por encima de los sentimientos de Amina.',quote:'«Algunas decisiones no se toman por crueldad, sino por deber.»'}
@@ -88,3 +88,64 @@ const CHAPTERS = [
    visitTip:'La experiencia culmina cuando el visitante comprende que ha conocido lugares reales mientras resolvía una ficción emotiva.',realHistory:'Chinchilla está protegida como Conjunto Histórico. Su patrimonio reúne castillo y murallas, baños árabes, cuevas, arquitectura civil y religiosa y un trazado urbano que permite leer distintas etapas de su historia.',officialUrl:'https://www.turismocastillalamancha.es/es/cultura-y-patrimonio/monumentos/albacete/conjunto-historico-de-chinchilla-de-montearagon',
    hints:['El muro final no se ordena por capítulos, sino por causa: qué tuvo que pasar para que el siguiente hecho fuera posible.','La caja usa tres recuerdos concretos: el último paso seguro de la huida, el símbolo de VOLVER y la firma del interceptor.','Cadena: herida → promesa → Rajid los ve → Ferran deja la carta → Rajid la intercepta → Amina espera. Caja: NORTE · ↶ · R.']}
 ];
+
+/* V57 · rediseño de mecánicas de campo. La ubicación deja de ser un extra y pasa a formar parte del bucle de juego. */
+const FIELD_CONFIG = {
+  1:{title:'La grieta en la leyenda',kind:'RASTREO DE CAMPO',difficulty:'INICIO',radius:85,minutes:5,
+    question:'Activa el punto de la Plaza, registra tres rastros y abre la grieta de la leyenda.',
+    success:'Revelar físicamente los fragmentos y encajar la carta en el único hueco posible.',
+    fieldPrompt:'Busca un punto tranquilo de la Plaza de la Mancha. El GPS debe situarte dentro de la zona antes de abrir el caso.',
+    fieldAction:'Al llegar, la plaza se convierte en el tablero de investigación.'},
+  2:{title:'Rastro de Ferran',kind:'CÁMARA + RASTREO',difficulty:'INICIO',radius:95,minutes:6,
+    question:'Documenta un paso real del entorno y reconstruye el avance de Ferran sobre el terreno.',
+    success:'Tomar una prueba fotográfica local y completar el rastro sin saltar ningún indicio.',
+    fieldPrompt:'Sitúate en el acceso bajo o junto a un punto de paso reconocible. La cámara será parte de la prueba.',
+    fieldAction:'Fotografía un acceso, desnivel o estrechamiento; la imagen no se sube a ningún servidor.'},
+  3:{title:'La visita imposible',kind:'SIGILO TÁCTIL',difficulty:'MEDIO',radius:80,minutes:6,
+    question:'Entrega tres suministros atravesando una ronda móvil sin ser detectado.',
+    success:'Completar tres cruces de sigilo y entregar agua, vendas y alimento.',
+    fieldPrompt:'Acércate a los Baños Árabes y observa el espacio exterior antes de empezar la simulación.',
+    fieldAction:'El lugar activa una pequeña misión de sigilo inspirada en las visitas nocturnas de Amina.'},
+  4:{title:'Calles de sombra',kind:'MOVIMIENTO + MAPA',difficulty:'MEDIO',radius:110,minutes:7,
+    question:'Camina por el casco para calibrar el mapa y después traza una ruta sin entrar en las zonas vigiladas.',
+    success:'Registrar al menos 18 m de movimiento real y superar el laberinto de vigilancia.',
+    fieldPrompt:'Entra en las calles del casco histórico. No hace falta seguir una dirección concreta: muévete solo por zonas seguras y peatonales.',
+    fieldAction:'Tu desplazamiento real calibra el mapa de Amina antes del puzle.'},
+  5:{title:'El código escondido',kind:'CÁMARA + TRAZO',difficulty:'MEDIO',radius:110,minutes:6,
+    question:'Captura una textura del entorno y recupera sobre ella los símbolos del código secreto.',
+    success:'Registrar la escena y trazar el símbolo de regreso para revelar el mensaje.',
+    fieldPrompt:'Busca una textura, piedra, cueva, chimenea o rincón que represente esta zona de refugio.',
+    fieldAction:'La foto se convierte en el soporte del código; el reto ocurre encima de vuestra propia imagen.'},
+  6:{title:'Ojos sobre la ciudad',kind:'BRÚJULA + VISIÓN',difficulty:'MEDIO–ALTO',radius:120,minutes:5,
+    question:'Orienta el móvil hacia la fortaleza y mantén la línea de visión hasta fijar el punto de observación.',
+    success:'Bloquear la dirección del castillo durante dos segundos usando la brújula del dispositivo.',
+    fieldPrompt:'Busca un punto abierto de la zona alta o mirador desde el que puedas orientarte hacia la fortaleza.',
+    fieldAction:'La brújula del teléfono sustituye a una pregunta: tendrás que encontrar la dirección real.'},
+  7:{title:'La ventana de fuga',kind:'REFLEJOS + PATRULLAS',difficulty:'ALTO',radius:120,minutes:6,
+    question:'Cruza tres sectores en el único instante en que las patrullas dejan una ventana abierta.',
+    success:'Encadenar tres cruces sin entrar en el cono de vigilancia.',
+    fieldPrompt:'Llega al exterior de la fortaleza y busca un lugar seguro donde detenerte; no juegues caminando.',
+    fieldAction:'El entorno desbloquea una secuencia de patrullas que exige observación y reflejos.'},
+  8:{title:'El documento fantasma',kind:'CÁMARA + SUPERPOSICIÓN',difficulty:'ALTO',radius:105,minutes:7,
+    question:'Usa una imagen real del castillo como mesa de luz y alinea sobre ella el documento interceptado.',
+    success:'Capturar el fondo, alinear tres marcas y hacer aparecer el sello de Rajid.',
+    fieldPrompt:'Sitúate en el exterior del castillo y encuadra piedra, muro o acceso sin fotografiar a otras personas.',
+    fieldAction:'La escena real se convierte en el fondo de una mesa de documentos aumentada.'},
+  9:{title:'La carta que nunca llegó',kind:'FINAL DE CAMPO',difficulty:'FINAL',radius:120,minutes:8,
+    question:'Activa las tres cerraduras del caso y reconstruye la carta final.',
+    success:'Validar presencia, orientación y evidencias acumuladas; después montar la carta completa.',
+    fieldPrompt:'Permanece en la zona del castillo. El final solo se abre tras una última comprobación de campo.',
+    fieldAction:'La ubicación real y lo descubierto durante la ruta abren el archivo final.'}
+};
+CHAPTERS.forEach(ch=>Object.assign(ch,FIELD_CONFIG[ch.n]||{}));
+const FIELD_HINTS={
+1:['Mueve el escáner lentamente: los rastros aparecen en tres zonas distintas.','Cuando tengas 3/3, mira el hueco temporal, no el contenido de las frases.','La carta debe ocurrir después de recuperarse y antes de huir.'],
+2:['La foto solo activa el escenario; después piensa en movimiento físico.','Primero hay una caída/separación, después señales de avance a pie.','Estribo → caballo que regresa → sangre → tela en el paso.'],
+3:['No pulses nada más ver un hueco: observa un ciclo completo.','El cruce es seguro cuando el guardia está claramente en uno de los extremos.','Haz tres cruces limpios; cada ronda cambia ligeramente de ritmo.'],
+4:['Detente para mirar la pantalla: el juego suma distancia GPS entre posiciones consecutivas.','En el mapa, una zona roja puede conectar, pero no es una ruta válida.','La rama segura evita 2, 4 y 6.'],
+5:['Empieza el gesto por el punto luminoso superior derecho.','No levantes el dedo y pasa cerca de cada punto en orden.','El trazo forma ↶, el signo de VOLVER.'],
+6:['Activa la brújula con el botón; en iPhone el permiso necesita un toque del usuario.','Gira despacio y mantente parado; la flecha muestra la diferencia con la fortaleza.','Cuando baje de unos 14°, mantén la posición durante dos segundos.'],
+7:['Mira los dos guardias, no solo uno.','La franja central debe quedar vacía a la vez para ambos.','Supera tres sectores; el ritmo cambia después de cada cruce.'],
+8:['Empieza ajustando horizontal y vertical antes de tocar la rotación.','Las tres cruces del papel deben caer sobre las tres marcas luminosas.','La posición objetivo está cerca del centro y la rotación es ligeramente positiva.'],
+9:['La presencia y las ocho evidencias deberían estar ya validadas al llegar.','La tercera cerradura pide mirar de nuevo hacia el punto donde empezó la aventura.','Después ordena la carta como texto humano: motivo, promesa, advertencia y firma.']};
+CHAPTERS.forEach(ch=>{if(FIELD_HINTS[ch.n])ch.hints=FIELD_HINTS[ch.n]});

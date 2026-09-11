@@ -5,7 +5,7 @@ const gameLabel=document.getElementById('gameLabel');
 const journal=document.getElementById('journal');
 const mapModal=document.getElementById('mapModal');
 let current=0, completed=new Set(), introSeen=false, tutorialSeen=false, mapInstance=null;
-const SAVE_KEY='promesa_chinchilla_v55_mobile_first';
+const SAVE_KEY='promesa_chinchilla_v57_field_game';
 
 function roman(n){return ['I','II','III','IV','V','VI','VII','VIII','IX'][n-1]}
 function save(){localStorage.setItem(SAVE_KEY,JSON.stringify({current,completed:[...completed],introSeen,tutorialSeen}))}
@@ -66,34 +66,41 @@ function openGame(){
   const s=load();
   if(s&&s.introSeen){current=Math.min(+s.current||0,8);completed=new Set(s.completed||[]);introSeen=true;tutorialSeen=!!s.tutorialSeen;showResume()}else startFresh();
 }
-function closeGame(){save();game.classList.remove('open');game.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+function closeGame(){window.currentPuzzleCleanup?.();window.currentPuzzleCleanup=null;save();game.classList.remove('open');game.setAttribute('aria-hidden','true');document.body.style.overflow=''}
 function startFresh(){current=0;completed=new Set();introSeen=false;tutorialSeen=false;localStorage.removeItem(SAVE_KEY);updateBar();renderCinematic(0,()=>{introSeen=true;save();showTutorial()})}
 
 function showTutorial(){
   tutorialSeen=true;save();scrollTop();liveMap.classList.add('hidden');
-  stage.innerHTML=`<section class="investigation-tutorial-v53">
-    <small>ANTES DE EMPEZAR · 30 SEGUNDOS</small>
-    <h2>No busquéis la respuesta.<br><em>Buscad la prueba.</em></h2>
-    <p>Cada capítulo os dará información. Primero la examináis; después la utilizáis para demostrar algo. Y mientras avanzáis, también vais conociendo lugares de Chinchilla y el papel que pueden tener en la historia.</p>
+  stage.innerHTML=`<section class="investigation-tutorial-v53 field-tutorial-v57">
+    <small>ANTES DE EMPEZAR · EXPERIENCIA DE CAMPO</small>
+    <h2>El pueblo ya no es el fondo.<br><em>Es el tablero.</em></h2>
+    <p>Esta versión está pensada para jugar caminando con el móvil. La ubicación desbloquea cada parada y algunas pruebas usan cámara, brújula o movimiento real.</p>
     <div class="tutorial-steps-v53">
-      <article><span>01</span><b>OBSERVA</b><p>Toca documentos, rastros, mapas y objetos. No todo será útil.</p></article>
-      <article><span>02</span><b>CONECTA</b><p>Una pista aislada rara vez resuelve el caso. Relacionadla con otra.</p></article>
-      <article><span>03</span><b>DEMUESTRA</b><p>Cuando vuestra explicación aguante las pruebas, el capítulo avanzará.</p></article>
+      <article><span>01</span><b>LLEGA</b><p>El GPS confirma que estás en la zona de la misión. No hace falta clavar un punto exacto.</p></article>
+      <article><span>02</span><b>OBSERVA</b><p>Busca arquitectura, texturas, vistas y recorridos. Varias pruebas usan lo que tienes delante.</p></article>
+      <article><span>03</span><b>JUEGA</b><p>Desliza, fotografía, orienta, camina y espera patrones. Se acabó responder cuestionarios.</p></article>
     </div>
-    <div class="tutorial-hint-v53"><b>Ruta + juego</b><span>La app no solo os hace jugar: en cada parada os cuenta qué mirar, por qué ese lugar importa y cómo encaja en el misterio.</span></div>
-    <button class="btn primary" id="tutorialGoV53"><i class="fa-solid fa-play"></i> Abrir el caso</button>
+    <div class="privacy-note-v57"><i class="fa-solid fa-location-dot"></i><div><b>Ubicación y cámara</b><span>El navegador pedirá permiso cuando haga falta. La partida no guarda tus coordenadas ni las fotos en el progreso. Juega siempre parado cuando mires la pantalla.</span></div></div>
+    <button class="btn primary" id="tutorialGoV53"><i class="fa-solid fa-location-crosshairs"></i> Activar primera parada</button>
   </section>`;
-  document.getElementById('tutorialGoV53').onclick=showBriefing;
+  document.getElementById('tutorialGoV53').onclick=()=>showLocationCheck(CHAPTERS[current]);
 }
-function showResume(){updateBar();liveMap.classList.add('hidden');stage.innerHTML=`<section class="resume"><small>PARTIDA ENCONTRADA</small><h2>El caso sigue abierto.</h2><p>${completed.size} de 9 capítulos resueltos.</p><button class="btn primary" id="resumeBtn"><i class="fa-solid fa-arrow-right"></i> Continuar</button><button class="btn ghost" id="restartBtn"><i class="fa-solid fa-rotate-left"></i> Empezar de nuevo</button></section>`;document.getElementById('resumeBtn').onclick=()=>tutorialSeen?showBriefing():showTutorial();document.getElementById('restartBtn').onclick=startFresh}
+
+function showResume(){
+  updateBar();liveMap.classList.add('hidden');
+  stage.innerHTML=`<section class="resume"><small>PARTIDA ENCONTRADA</small><h2>El caso sigue abierto.</h2><p>${completed.size} de 9 capítulos resueltos.</p><button class="btn primary" id="resumeBtn"><i class="fa-solid fa-location-crosshairs"></i> Volver a la ruta</button><button class="btn ghost" id="restartBtn"><i class="fa-solid fa-rotate-left"></i> Empezar de nuevo</button></section>`;
+  document.getElementById('resumeBtn').onclick=()=>tutorialSeen?showLocationCheck(CHAPTERS[current]):showTutorial();
+  document.getElementById('restartBtn').onclick=startFresh;
+}
 
 function showBriefing(){
   const ch=CHAPTERS[current];updateBar();scrollTop();updateLiveMap();
-  stage.innerHTML=`<section class="briefing"><img src="${ch.image}" alt="" class="brief-img"><div class="brief-shade"></div><div class="brief-copy"><small>CAPÍTULO ${roman(ch.n)} · ${ch.place}</small><h2>${ch.title}</h2><p>${ch.story}</p><div class="brief-meta-v53"><span><i class="${ch.icon}"></i> ${ch.kind}</span><span><i class="fa-solid fa-signal"></i> ${ch.difficulty}</span><span><i class="fa-regular fa-clock"></i> ≈ ${ch.minutes} min de juego</span></div><div class="mission-objective"><span>PREGUNTA DEL CASO</span><b>${ch.question}</b><small>${ch.success}</small></div><div class="place-panel-v54"><article><small>LUGAR QUE VISITÁIS</small><h4>${ch.placeShort}</h4><p>${ch.heritage}</p></article><article><small>QUÉ MIRAR AQUÍ</small><ul class="place-points"><li><i class="fa-regular fa-eye"></i><span>${ch.lookfor}</span></li><li><i class="fa-regular fa-lightbulb"></i><span>${ch.visitTip}</span></li></ul></article><article class="real-history-v55"><small>HISTORIA REAL</small><p>${ch.realHistory}</p><a href="${ch.officialUrl}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Fuente oficial</a></article></div><button class="btn primary" id="briefStart"><i class="fa-solid fa-magnifying-glass"></i> Entrar en la investigación</button></div></section>`;
+  stage.innerHTML=`<section class="briefing"><img src="${ch.image}" alt="" class="brief-img"><div class="brief-shade"></div><div class="brief-copy"><small>CAPÍTULO ${roman(ch.n)} · ${ch.place}</small><h2>${ch.title}</h2><p>${ch.story}</p><div class="brief-meta-v53"><span><i class="${ch.icon}"></i> ${ch.kind}</span><span><i class="fa-solid fa-location-dot"></i> Zona validada</span><span><i class="fa-regular fa-clock"></i> ≈ ${ch.minutes} min</span></div><div class="mission-objective"><span>MISIÓN</span><b>${ch.question}</b><small>${ch.success}</small></div><div class="place-panel-v54"><article><small>ESTÁS EN</small><h4>${ch.placeShort}</h4><p>${ch.heritage}</p></article><article><small>LEVANTA LA VISTA</small><ul class="place-points"><li><i class="fa-regular fa-eye"></i><span>${ch.lookfor}</span></li><li><i class="fa-regular fa-lightbulb"></i><span>${ch.visitTip}</span></li></ul></article><article class="real-history-v55"><small>HISTORIA REAL</small><p>${ch.realHistory}</p><a href="${ch.officialUrl}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Fuente oficial</a></article></div><button class="btn primary" id="briefStart"><i class="fa-solid fa-gamepad"></i> Empezar prueba</button></div></section>`;
   document.getElementById('briefStart').onclick=()=>{const beats=CINEMATICS[ch.n];if(beats)renderCinematic(ch.n,()=>renderPuzzle(ch));else renderPuzzle(ch)};
 }
 
 function completeChapter(ch){
+  window.currentPuzzleCleanup?.();window.currentPuzzleCleanup=null;
   completed.add(ch.n-1);save();updateBar();scrollTop();
   stage.innerHTML=`<section class="reward"><small>EVIDENCIA ${roman(ch.n)}</small><div class="evidence-stamp">${ch.evidence}</div><h2>Esto cambia el caso.</h2><p>${rewardText(ch.n)}</p><div class="memory-card-v53"><span>DATO GUARDADO</span><b>${ch.memory}</b></div><button class="btn primary" id="nextBtn">${ch.n===9?'<i class="fa-solid fa-envelope-open"></i> Ver desenlace':'<i class="fa-solid fa-book-open"></i> Guardar en el cuaderno'}</button></section>`;
   document.getElementById('nextBtn').onclick=()=>{if(ch.n===9)return showEnding();current++;save();showTravel()};
@@ -113,23 +120,37 @@ function rewardText(n){return [
 
 function showTravel(){
   const ch=CHAPTERS[current];scrollTop();updateLiveMap();
-  stage.innerHTML=`<section class="travel"><small>SIGUIENTE DESTINO</small><h2>${ch.place}</h2><p>Dejad que la historia repose mientras camináis. Aldara ha marcado una pregunta en el cuaderno:</p><blockquote>${travelQuestion(current)}</blockquote><div class="travel-tip"><i class="fa-solid fa-person-walking"></i><span>Mientras vais hacia la siguiente parada, levantad la vista: la aventura funciona mejor cuando el lugar también os habla.</span></div><div class="travel-place-v54"><article><small>EN ESTA PARADA</small><h4>${ch.placeShort}</h4><p>${ch.heritage}</p></article><article><small>NO OS PERDÁIS</small><p>${ch.lookfor}</p></article><article><small>HISTORIA REAL</small><p>${ch.realHistory}</p></article></div><div class="travel-actions"><button class="btn ghost" id="travelMap"><i class="fa-solid fa-route"></i> Abrir mapa</button><button class="btn primary" id="arrived"><i class="fa-solid fa-circle-check"></i> Ya estamos aquí</button></div></section>`;
-  document.getElementById('travelMap').onclick=openMap;document.getElementById('arrived').onclick=()=>showLocationCheck(ch);
+  const status=locationStatus(ch);
+  stage.innerHTML=`<section class="travel field-travel-v57"><small>SIGUIENTE DESTINO · CAPÍTULO ${roman(ch.n)}</small><h2>${ch.place}</h2><p>${ch.fieldPrompt||'Acércate al siguiente punto de la ruta.'}</p><div class="travel-distance-v57"><i class="fa-solid fa-location-arrow"></i><div><small>DISTANCIA AHORA</small><b id="travelDistance57">${status.distance==null?'Activa ubicación':fmtDist(status.distance)}</b></div><span>${ch.radius||90} m zona</span></div><div class="travel-tip"><i class="fa-solid fa-person-walking"></i><span>${ch.fieldAction||ch.lookfor}</span></div><div class="travel-place-v54"><article><small>QUÉ MIRAR</small><p>${ch.lookfor}</p></article><article><small>HISTORIA REAL</small><p>${ch.realHistory}</p></article></div><div class="travel-actions"><button class="btn ghost" id="travelMap"><i class="fa-solid fa-route"></i> Mapa</button><button class="btn primary" id="arrived"><i class="fa-solid fa-location-crosshairs"></i> Comprobar llegada</button></div></section>`;
+  document.getElementById('travelMap').onclick=openMap;
+  document.getElementById('arrived').onclick=()=>showLocationCheck(ch);
 }
 
 function showLocationCheck(ch){
   scrollTop();liveMap.classList.add('hidden');
-  const near=lastPos?haversine(lastPos,ch.coord)<60:false;
-  stage.innerHTML=`<section class="location-check-v56">
-    <small>CONFIRMA EL LUGAR</small>
-    <h2>${ch.placeShort}</h2>
-    <div class="env-photo-v56"><img src="${ch.envPhoto}" alt="Detalle del entorno en ${ch.placeShort}">${near?'<span class="env-badge-v56 ok"><i class="fa-solid fa-check"></i> Estás cerca</span>':''}</div>
-    <p class="env-lookfor-v56"><i class="fa-regular fa-eye"></i> ${ch.lookfor}</p>
-    <button class="btn primary" id="envConfirm"><i class="fa-solid fa-magnifying-glass"></i> Lo he encontrado, seguir</button>
-    <button class="btn ghost" id="envSkip">No lo encuentro, continuar igualmente</button>
-  </section>`;
-  document.getElementById('envConfirm').onclick=()=>showBriefing();
-  document.getElementById('envSkip').onclick=()=>showBriefing();
+  const render=()=>{
+    const s=locationStatus(ch),radius=ch.radius||90,near=s.near||s.demo;
+    stage.innerHTML=`<section class="location-gate-v57">
+      <div class="location-orbit-v57 ${near?'ready':''}"><i class="fa-solid ${near?'fa-check':'fa-location-crosshairs'}"></i><span></span></div>
+      <small>${s.demo?'MODO DEMO':'CONTROL DE ZONA'}</small>
+      <h2>${ch.placeShort}</h2>
+      <p>${ch.fieldPrompt||ch.lookfor}</p>
+      <div class="location-readout-v57">
+        <article><small>DISTANCIA</small><b id="gateDistance57">${s.distance==null?'—':fmtDist(s.distance)}</b></article>
+        <article><small>PRECISIÓN GPS</small><b>${s.accuracy?`±${Math.round(s.accuracy)} m`:'—'}</b></article>
+        <article><small>ZONA DE JUEGO</small><b>${radius} m</b></article>
+      </div>
+      <div class="location-state-v57 ${near?'ok':''}"><i class="fa-solid ${near?'fa-circle-check':'fa-satellite-dish'}"></i><span>${s.demo?'Prototipo desbloqueado fuera de Chinchilla.':near?'Estás dentro de la zona. La escena puede comenzar.':s.distance==null?'Necesito una posición para saber si has llegado.':`Acércate ${fmtDist(Math.max(0,s.distance-s.threshold))} aproximadamente.`}</span></div>
+      <button class="btn ${near?'primary':'ghost'} full" id="locate57"><i class="fa-solid fa-location-crosshairs"></i> ${near?'Actualizar posición':'Activar / actualizar ubicación'}</button>
+      <button class="btn primary full" id="enterField57" ${near?'':'disabled'}><i class="fa-solid fa-gamepad"></i> Entrar en la escena</button>
+      ${!s.demo&&canFieldDemo()?'<button class="location-demo-v57" id="demoField57">Modo demo para revisión técnica</button>':''}
+      <p class="location-privacy-v57"><i class="fa-solid fa-shield-halved"></i> El progreso no guarda coordenadas. La geolocalización depende del permiso y precisión del navegador.</p>
+    </section>`;
+    document.getElementById('locate57').onclick=async()=>{const btn=document.getElementById('locate57');btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Buscando señal';await requestLocationFix();render()};
+    document.getElementById('enterField57').onclick=()=>showBriefing();
+    document.getElementById('demoField57')?.addEventListener('click',()=>{sessionStorage.setItem('promesa_field_demo','1');render()});
+  };
+  render();
 }
 
 function travelQuestion(i){return [
@@ -184,7 +205,7 @@ const liveMap=document.getElementById('liveMap');
 const liveMapThumb=document.getElementById('liveMapThumb');
 const liveMapLabel=document.getElementById('liveMapLabel');
 const liveMapDist=document.getElementById('liveMapDist');
-let liveMapInstance=null, liveMeMarker=null, liveTargetMarker=null, liveLine=null, geoWatchId=null, lastPos=null;
+let liveMapInstance=null, liveMeMarker=null, liveTargetMarker=null, liveLine=null, geoWatchId=null, lastPos=null, lastAccuracy=null, lastHeading=null;
 
 function haversine(a,b){
   const R=6371000,toRad=d=>d*Math.PI/180;
@@ -192,7 +213,26 @@ function haversine(a,b){
   const s=Math.sin(dLat/2)**2+Math.cos(toRad(a[0]))*Math.cos(toRad(b[0]))*Math.sin(dLon/2)**2;
   return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
 }
-function fmtDist(m){return m<1000?`${Math.round(m/10)*10} m`:`${(m/1000).toFixed(1)} km`}
+function fmtDist(m){return m<1000?`${Math.max(0,Math.round(m/10)*10)} m`:`${(m/1000).toFixed(1)} km`}
+function canFieldDemo(){return location.protocol==='file:'||['localhost','127.0.0.1'].includes(location.hostname)||new URLSearchParams(location.search).get('dev')==='1'}
+function locationStatus(ch){
+  const demo=sessionStorage.getItem('promesa_field_demo')==='1'||new URLSearchParams(location.search).get('demo')==='1';
+  const distance=lastPos?haversine(lastPos,ch.coord):null;
+  const radius=ch.radius||90;
+  const accuracy=Number.isFinite(lastAccuracy)?lastAccuracy:null;
+  const threshold=Math.max(radius,Math.min((accuracy||0)+25,145));
+  return {demo,distance,accuracy,threshold,near:distance!=null&&distance<=threshold};
+}
+function requestLocationFix(){
+  return new Promise(resolve=>{
+    if(!navigator.geolocation){resolve(false);return}
+    navigator.geolocation.getCurrentPosition(pos=>{
+      lastPos=[pos.coords.latitude,pos.coords.longitude];lastAccuracy=pos.coords.accuracy||null;
+      window.dispatchEvent(new CustomEvent('field:location',{detail:{position:lastPos,accuracy:lastAccuracy}}));
+      updateLiveMap();resolve(true);
+    },()=>resolve(false),{enableHighAccuracy:true,maximumAge:2000,timeout:12000});
+  });
+}
 
 function initLiveMapThumb(target){
   if(!window.L)return;
@@ -217,6 +257,7 @@ function updateLiveMap(){
     const d=haversine(lastPos,ch.coord);
     liveMapDist.textContent=fmtDist(d);
     liveMap.classList.toggle('near',d<40);
+    if(!window.L||!liveMapInstance)return;
     const bounds=L.latLngBounds([lastPos,ch.coord]).pad(.35);
     liveMapInstance.fitBounds(bounds);
     if(!liveMeMarker)liveMeMarker=L.circleMarker(lastPos,{radius:6,color:'#5aa5ff',fillColor:'#5aa5ff',fillOpacity:1,weight:2}).addTo(liveMapInstance);
@@ -231,7 +272,7 @@ function updateLiveMap(){
 function startGeoWatch(){
   if(!navigator.geolocation||geoWatchId!==null)return;
   geoWatchId=navigator.geolocation.watchPosition(
-    pos=>{lastPos=[pos.coords.latitude,pos.coords.longitude];if(!game.classList.contains('open'))return;updateLiveMap()},
+    pos=>{lastPos=[pos.coords.latitude,pos.coords.longitude];lastAccuracy=pos.coords.accuracy||null;window.dispatchEvent(new CustomEvent('field:location',{detail:{position:lastPos,accuracy:lastAccuracy}}));if(!game.classList.contains('open'))return;updateLiveMap()},
     ()=>{liveMapDist.textContent='ubicación no disponible'},
     {enableHighAccuracy:true,maximumAge:8000,timeout:15000}
   );
@@ -271,6 +312,7 @@ function paintCompass(){
 function onOrientation(e){
   const heading=headingFromEvent(e);
   if(heading===null||current>=CHAPTERS.length)return;
+  lastHeading=heading;window.dispatchEvent(new CustomEvent('field:heading',{detail:{heading}}));
   const ch=CHAPTERS[current];
   if(!lastPos){compassMsg.textContent='Activa la ubicación para calcular la dirección.';return}
   const target=bearing(lastPos,ch.coord);
@@ -281,20 +323,17 @@ function onOrientation(e){
   paintCompass();
 }
 function startCompass(){
+  if(compassHandler)return Promise.resolve(true);
   const supported=typeof window.DeviceOrientationEvent!=='undefined';
-  if(!supported){compassMsg.textContent='Este dispositivo no ofrece brújula (probadlo en un móvil real).';compassMsg.classList.add('err');return}
-  const attach=()=>{
-    const evt='ondeviceorientationabsolute' in window?'deviceorientationabsolute':'deviceorientation';
-    compassHandler=onOrientation;
-    window.addEventListener(evt,compassHandler,true);
-  };
+  if(!supported){compassMsg.textContent='Este dispositivo no ofrece brújula.';compassMsg.classList.add('err');return Promise.resolve(false)}
+  const attach=()=>{const evt='ondeviceorientationabsolute' in window?'deviceorientationabsolute':'deviceorientation';compassHandler=onOrientation;window.addEventListener(evt,compassHandler,true);return true};
   if(typeof DeviceOrientationEvent.requestPermission==='function'){
-    DeviceOrientationEvent.requestPermission().then(state=>{
-      if(state==='granted')attach();
-      else{compassMsg.textContent='Sin permiso de sensores no puede orientar la flecha. Actívalo en Ajustes del navegador.';compassMsg.classList.add('err')}
-    }).catch(()=>{compassMsg.textContent='No se pudo pedir permiso de brújula en este navegador.';compassMsg.classList.add('err')});
-  }else attach();
+    const ask=()=>{try{const p=DeviceOrientationEvent.requestPermission(true);return Promise.resolve(p).catch(()=>DeviceOrientationEvent.requestPermission())}catch{return DeviceOrientationEvent.requestPermission()}};
+    return ask().then(state=>{if(state==='granted')return attach();compassMsg.textContent='Sin permiso de sensores no se puede orientar la flecha.';compassMsg.classList.add('err');return false}).catch(()=>false);
+  }
+  return Promise.resolve(attach());
 }
+
 function stopCompass(){
   if(compassHandler){
     window.removeEventListener('deviceorientationabsolute',compassHandler,true);
@@ -310,5 +349,12 @@ function openCompass(){
   compassOverlay.classList.add('open');compassOverlay.setAttribute('aria-hidden','false');
   startCompass();
 }
+window.GeoMission={
+  get position(){return lastPos},get accuracy(){return lastAccuracy},get heading(){return lastHeading},
+  get demo(){return locationStatus(CHAPTERS[Math.min(current,CHAPTERS.length-1)]).demo},
+  status:locationStatus,distance:(a,b)=>haversine(a,b),bearing:(a,b)=>bearing(a,b),
+  requestLocation:requestLocationFix,enableHeading:startCompass
+};
+
 document.getElementById('liveMapCompassBtn').addEventListener('click',e=>{e.stopPropagation();openCompass()});
 document.getElementById('compassClose').addEventListener('click',stopCompass);

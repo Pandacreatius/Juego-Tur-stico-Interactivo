@@ -1,0 +1,55 @@
+V57 · JUEGO DE CAMPO + GEOLOCALIZACIÓN CENTRAL
+
+Objetivo de la revisión
+- Eliminar la sensación de cuestionario.
+- Convertir Chinchilla y la posición del jugador en parte de la mecánica.
+- Rehacer las 9 pruebas con interacción móvil real.
+- Corregir el enfoque responsive: teléfono primero, escritorio solo como preview.
+
+Nuevo bucle de juego
+1. Viajar a la siguiente parada.
+2. Comprobar GPS y entrar en el radio de juego (80–120 m según parada).
+3. Leer el contexto turístico e histórico del lugar.
+4. Resolver una misión de campo táctil.
+5. Guardar la evidencia y caminar al siguiente punto.
+
+Nuevas pruebas
+1. La grieta en la leyenda — escáner táctil + cronología física.
+2. Rastro de Ferran — cámara + rastreo secuencial.
+3. La visita imposible — minijuego de sigilo en tiempo real.
+4. Calles de sombra — movimiento GPS (18 m) + mapa de vigilancia.
+5. El código escondido — foto propia + trazado gestual sobre la escena.
+6. Ojos sobre la ciudad — brújula real y bloqueo de línea de visión.
+7. La ventana de fuga — reflejos y patrones de dos patrullas.
+8. El documento fantasma — cámara + mesa de luz y superposición.
+9. La carta que nunca llegó — triple cerradura (presencia, progreso, orientación) + reconstrucción final.
+
+Ubicación
+- Geofence flexible con radio por capítulo.
+- Se tiene en cuenta la precisión GPS para no bloquear por errores normales del dispositivo.
+- watchPosition mantiene la distancia viva durante el recorrido.
+- La posición NO se añade al guardado de la partida.
+- Modo demo de sesión para revisar el prototipo fuera de Chinchilla. El acceso de demo solo se muestra en file://, localhost/127.0.0.1 o si se abre la app con ?dev=1; no aparece en producción por defecto.
+
+Cámara
+- Se usa input capture="environment" para abrir la cámara de forma robusta en móvil.
+- La imagen se usa solo durante la prueba actual y no se guarda en localStorage.
+- Se pide encuadrar entorno/arquitectura y evitar caras.
+
+Brújula
+- Usa DeviceOrientationEvent cuando está disponible.
+- En iOS el permiso se solicita tras pulsación del usuario.
+- Capítulos 6 y 9 utilizan orientación real.
+- Hay simulador solo en modo demo.
+
+Responsive
+- 360–430 px prioritario.
+- Controles táctiles amplios.
+- 100dvh/safe-area.
+- Adaptación específica <=390 px y móvil horizontal de poca altura.
+- No hay grids críticos que obliguen a ancho de escritorio.
+
+IMPORTANTE PARA PRODUCCIÓN
+- Geolocalización y sensores deben servirse por HTTPS (o localhost durante desarrollo).
+- Las coordenadas de las 9 paradas deben verificarse físicamente in situ antes de publicar la ruta definitiva.
+- Los archivos assets/env/parada-1.jpg ... parada-9.jpg siguen siendo placeholders; conviene sustituirlos por fotos reales del lugar.
